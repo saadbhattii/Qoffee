@@ -1,8 +1,10 @@
 name: Qoffee Watcher
 
 on:
+  schedule:
     # GitHub delays scheduled runs under load; 15 minutes is a floor, not a
     # promise. Fine for queues measured in hours.
+    - cron: "*/15 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -22,8 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
-  actions: write   # required by the keepalive step below
+  contents: write   # keepalive pushes an empty commit; read is not enough
 
 jobs:
   watch:
@@ -31,6 +32,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history so the keepalive step can read the last commit date.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -53,10 +57,21 @@ jobs:
             ${{ inputs.verbose && '--verbose' || '' }}
 
       # GitHub disables scheduled workflows in public repos after 60 days with
-      # no commit activity, silently and including manual dispatch. This resets
-      # the clock via the API without polluting history with dummy commits.
+      # no commit activity — silently, and that kills manual dispatch too. An
+      # empty commit every 45 days resets the clock. Done inline rather than
+      # via a third-party action, which is what the repository-access block
+      # was about.
       - name: Keep the schedule alive
         if: github.event_name == 'schedule'
-        uses: gautamkrishnar/keepalive-workflow@v2
-        with:
-          use_api: true
+        run: |
+          LAST=$(git log -1 --format=%ct)
+          AGE=$(( ( $(date +%s) - LAST ) / 86400 ))
+          if [ "$AGE" -ge 45 ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "chore: keepalive (${AGE}d since last commit)"
+            git push
+            echo "Keepalive commit pushed."
+          else
+            echo "Last commit ${AGE}d ago; no keepalive needed."
+          fi
