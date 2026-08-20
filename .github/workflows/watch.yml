@@ -1,0 +1,64 @@
+name: Qoffee Watcher
+
+on:
+  schedule:
+    # GitHub delays scheduled runs under load; 15 minutes is a floor, not a
+    # promise. Fine for queues measured in hours.
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Fetch and decide, but send nothing and change no tags"
+        type: boolean
+        default: false
+      verbose:
+        description: "Debug logging"
+        type: boolean
+        default: false
+
+# Cron, manual dispatch and a re-run can overlap. Without this, two runs both
+# notify and both rewrite tags — duplicate messages at best, a lost tag at
+# worst, since update_tags overwrites rather than appends.
+concurrency:
+  group: qoffee-watcher
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write   # required by the keepalive step below
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Watch
+        env:
+          IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
+          IBM_CRN: ${{ secrets.IBM_CRN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          NTFY_URL: ${{ secrets.NTFY_URL }}
+        run: |
+          python -m qoffee \
+            ${{ inputs.dry_run && '--dry-run' || '' }} \
+            ${{ inputs.verbose && '--verbose' || '' }}
+
+      # GitHub disables scheduled workflows in public repos after 60 days with
+      # no commit activity, silently and including manual dispatch. This resets
+      # the clock via the API without polluting history with dummy commits.
+      - name: Keep the schedule alive
+        if: github.event_name == 'schedule'
+        uses: gautamkrishnar/keepalive-workflow@v2
+        with:
+          use_api: true

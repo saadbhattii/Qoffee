@@ -1,0 +1,174 @@
+# ---------------------------------------------------------------------------
+# Secrets — nothing here should ever exist locally, but a typo'd filename
+# committed once is a rotated token. Belt and braces.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+secrets.*
+*_token.txt
+*_token
+*.pem
+*.key
+credentials.json
+qiskit-ibm.json
+.qiskit/
+*webhook*.txt
+*webhook*.json
+
+# ---------------------------------------------------------------------------
+# Python bytecode / build artifacts
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+sdist/
+wheels/
+develop-eggs/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+MANIFEST
+pip-wheel-metadata/
+share/python-wheels/
+.installed.cfg
+
+# ---------------------------------------------------------------------------
+# Virtual environments
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.python-version
+.direnv/
+Pipfile.lock
+poetry.lock
+uv.lock
+
+# ---------------------------------------------------------------------------
+# Testing
+# ---------------------------------------------------------------------------
+.pytest_cache/
+.cache/
+.tox/
+.nox/
+.hypothesis/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+coverage/
+*.cover
+*.py,cover
+nosetests.xml
+junit*.xml
+test-results/
+report.html
+.benchmarks/
+
+# Live-test scratch: anything a live run writes locally while poking the real
+# IBM API. Keep it out of history — it contains job IDs and instance CRNs.
+tests/live/output/
+tests/**/snapshots/
+*.live.json
+scratch/
+sandbox/
+
+# ---------------------------------------------------------------------------
+# Type checking / linting caches
+# ---------------------------------------------------------------------------
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.pylint.d/
+
+# ---------------------------------------------------------------------------
+# Local runtime output
+# ---------------------------------------------------------------------------
+*.log
+logs/
+qoffee.log
+qoffee-*.log
+*.state.json
+.qoffee_state*
+
+# Local overrides of the settings block. If you keep a personal copy of
+# settings.py to avoid dirtying the tracked one, name it this and it stays out
+# of your commits and out of merge conflicts.
+qoffee/settings.local.py
+settings.local.*
+
+# ---------------------------------------------------------------------------
+# Notebooks — likely present if you submit jobs interactively. Outputs embed
+# job IDs and sometimes tokens.
+# ---------------------------------------------------------------------------
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+profile_default/
+ipython_config.py
+
+# ---------------------------------------------------------------------------
+# Editors / IDEs
+# ---------------------------------------------------------------------------
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+*.iws
+*.swp
+*.swo
+*~
+.\#*
+\#*\#
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ---------------------------------------------------------------------------
+# OS cruft
+# ---------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.AppleDouble
+.LSOverride
+Icon
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.directory
+.Trash-*
+.nfs*
+
+# ---------------------------------------------------------------------------
+# Misc
+# ---------------------------------------------------------------------------
+*.bak
+*.orig
+*.rej
+*.tmp
+*.temp
+tmp/
+temp/
+*.zip
+*.tar.gz
+!.github/**/*.yml

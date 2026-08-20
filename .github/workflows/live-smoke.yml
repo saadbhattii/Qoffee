@@ -1,0 +1,26 @@
+name: Live API Smoke Test
+
+# Manual only. Catches upstream API drift — a renamed method, a new status
+# string — without putting a credentialled network call in the PR loop.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: qoffee-live
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - env:
+          IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
+          IBM_CRN: ${{ secrets.IBM_CRN }}
+        run: pytest -m live -v
