@@ -375,7 +375,7 @@ python -m qoffee --dry-run        # fetch, decide, report — change nothing
  
 - **Do I need to keep my laptop on?** No. It runs on GitHub's infrastructure.
  
-- **Does this cost anything?** No. GitHub Actions is free for public repos; IBM's Open Plan is free; Discord webhooks are free. The optional Cloudflare Worker is also free-tier.
+- **Does this cost anything?** No. GitHub Actions is free for public repos; Discord webhooks are free. The optional Cloudflare Worker is also free-tier.
  
 - **Can you see my quantum jobs?** No. There is no server to send them to. Read the code, it's fully public.
 
