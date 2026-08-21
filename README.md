@@ -1,15 +1,13 @@
-<p align="center">
-  <img src="assets/qoffee-logo.svg" alt="Qoffee logo" width="120">
-</p>
-<p align="center">
-  <img alt="license" src="https://img.shields.io/badge/license-MIT-334155?style=flat-square">
-  <img alt="python" src="https://img.shields.io/badge/python-3.11+-334155?style=flat-square">
-  <img alt="tests" src="https://img.shields.io/badge/tests-passing-334155?style=flat-square">
-  <img alt="cost" src="https://img.shields.io/badge/cost-free-334155?style=flat-square">
-  <img alt="provider" src="https://img.shields.io/badge/provider-IBM%20Quantum-1e3a8a?style=flat-square">
-</p>
+<img src="assets/qoffee_banner.svg" alt="Qoffee banner">
 
-# Qoffee
+---
+<p align="center">
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-293D38?style=flat-square">
+  <img alt="python" src="https://img.shields.io/badge/python-3.11+-293D38?style=flat-square">
+  <img alt="tests" src="https://img.shields.io/badge/tests-passing-293D38?style=flat-square">
+  <img alt="cost" src="https://img.shields.io/badge/cost-free-293D38?style=flat-square">
+  <img alt="provider" src="https://img.shields.io/badge/provider-IBM%20Quantum-0F766E?style=flat-square">
+</p>
 
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
 notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue. Setup is a one time process, and takes 3 minutes. 
@@ -92,7 +90,7 @@ Submit job with tag "qoffee"
 
 Add `SLACK_WEBHOOK` and/or `NTFY_URL` too if you want more than one channel. See [Notification channels](#notification-channels) below.
 
-> **Note:** [GitHub affirms](https://docs.github.com/en/actions/concepts/security/secrets) that nobody can view a secret's value once it's set; not you, not a collaborator, not anyone browsing a public repo. [This isn't fork-specific: it's true for every GitHub repository, always.](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets) Forking doesn't migrate secrets, [each fork's secrets are created independently by whoever owns that fork, and stay scoped to it alone.](https://2i2c.org/blog/github-action-secrets-forked-repositories/)
+> **Note:** [Nobody can view a secret's value once it's set; not you, not a collaborator, not anyone browsing a public repo.](https://docs.github.com/en/actions/concepts/security/secrets) This isn't fork-specific: [it's true for every GitHub repository, always.](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets) Forking doesn't migrate secrets, [each fork's secrets are created independently by whoever owns that fork, and stay scoped to it alone.](https://2i2c.org/blog/github-action-secrets-forked-repositories/)
    
 3. **Actions tab → enable workflows on your fork.** GitHub disables
    Actions entirely on a freshly forked repo until you enable them once. Optionally trigger the workflow once manually now to confirm everything connects.
@@ -375,19 +373,19 @@ python -m qoffee --dry-run        # fetch, decide, report — change nothing
 
 ## FAQ
  
-**Do I need to keep my laptop on?** No. It runs on GitHub's infrastructure.
+- **Do I need to keep my laptop on?** No. It runs on GitHub's infrastructure.
  
-**Does this cost anything?** No. GitHub Actions is free for public repos; IBM's Open Plan is free; Discord webhooks are free. The optional Cloudflare Worker is also free-tier.
+- **Does this cost anything?** No. GitHub Actions is free for public repos; IBM's Open Plan is free; Discord webhooks are free. The optional Cloudflare Worker is also free-tier.
  
-**Can you see my quantum jobs?** No. There is no server to send them to. Read the code, it's fully public.
+- **Can you see my quantum jobs?** No. There is no server to send them to. Read the code, it's fully public.
 
-**Can you see my secret keys?** No. They are saved in your forked repository settings that belongs to your Github Account.
+- **Can you see my secret keys?** No. They are saved in your forked repository settings that belongs to your Github Account.
  
-**What if I already have jobs tagged from an older version?** They migrate automatically.
+- **What if I already have jobs tagged from an older version?** They migrate automatically.
  
-**How do I stop tracking a job?** Remove the `qoffee` tag. Qoffee stops seeing it on the next run.
+- **How do I stop tracking a job?** Remove the `qoffee` tag. Qoffee stops seeing it on the next run.
  
-**What if my notification service is down?** Nothing gets untagged, the run goes red, and everything is reported again next run. By design.
+- **What if my notification service is down?** Nothing gets untagged, the run goes red, and everything is reported again next run. By design.
  
  
 ## License

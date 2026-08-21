@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320" role="img" aria-label="Qoffee — never babysit a quantum job again">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F14"/>
+      <stop offset="100%" stop-color="#0D1A18"/>
+    </linearGradient>
+
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00D2A0" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#00D2A0" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="logoFade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3BE8C4"/>
+      <stop offset="40%" stop-color="#00D2A0"/>
+      <stop offset="100%" stop-color="#00B4D8"/>
+    </linearGradient>
+
+    <radialGradient id="fadeGrad" cx="50%" cy="50%" r="80">
+      <stop offset="0%"  stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="92%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="fade" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+      <rect x="0" y="0" width="1" height="1" fill="url(#fadeGrad)"/>
+    </mask>
+  </defs>
+
+  <g mask="url(#fade)">
+    <rect width="1280" height="320" fill="url(#bg)"/>
+    <circle cx="180" cy="160" r="220" fill="url(#glow)"/>
+    <g stroke="#00D2A0" stroke-opacity="0.10" fill="none">
+      <ellipse cx="1060" cy="160" rx="340" ry="120" transform="rotate(-18 1060 160)"/>
+      <ellipse cx="1060" cy="160" rx="260" ry="90" transform="rotate(-18 1060 160)"/>
+    </g>
+  </g>
+
+  <g transform="translate(96,88) scale(2.05)" fill="url(#logoFade)">
+    <g transform="translate(-2.5,1.5)">
+      <path d="M 11,28 L 45,28 L 41,49 Q 40.2,53 36,53 L 20,53 Q 15.8,53 15,49 Z"/>
+      <path fill-rule="evenodd" d="
+        M 41.5,36 A 8.5,8.5 0 1,0 58.5,36 A 8.5,8.5 0 1,0 41.5,36 Z
+        M 45,36   A 5,5     0 1,0 55,36   A 5,5     0 1,0 45,36   Z"/>
+      <path fill-rule="evenodd" d="
+        M 13.90,21.13 A 15,6     -20 0,1 42.10,10.87 A 15,6     -20 0,1 13.90,21.13 Z
+        M 17.19,19.93 A 11.5,3   -20 0,1 38.81,12.07 A 11.5,3   -20 0,1 17.19,19.93 Z"/>
+      <circle cx="42.1" cy="10.87" r="3.2"/>
+    </g>
+  </g>
+
+  <text x="270" y="168" font-family="'IBM Plex Sans','Segoe UI',Helvetica,Arial,sans-serif"
+        font-size="72" font-weight="600" fill="#E6EDF3" letter-spacing="-1">Qoffee</text>
+
+  <text x="272" y="208" font-family="'IBM Plex Sans','Segoe UI',Helvetica,Arial,sans-serif"
+        font-size="22" font-weight="400" fill="#8B949E" letter-spacing="0.2">
+    Qoffee monitors your quantum jobs, so you don't have to.
+  </text>
+
+  <rect x="272" y="228" width="360" height="2" fill="url(#logoFade)" opacity="0.55"/>
+</svg>

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Qoffee">
   <title>Qoffee</title>
-  <g transform="translate(-2.5,1.5)" fill="#D98324">
+  <g transform="translate(-2.5,1.5)" fill="#00D2A0">
 
     <!-- cup -->
     <path d="M 11,28 L 45,28 L 41,49 Q 40.2,53 36,53 L 20,53 Q 15.8,53 15,49 Z"/>
