@@ -1,7 +1,35 @@
 # ☕ Qoffee
 
+
 Qoffee is an open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
 notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue.
+
+## Contents
+
+- [Perk: Qoffee has no database.](#perk-qoffee-has-no-database)
+- [How Qoffee works](#how-qoffee-works)
+- [Setup](#setup)
+- [Usage: Tagging a job with `qoffee`](#usage-tagging-a-job-with-qoffee)
+- [Qoffee doesn't spam.](#qoffee-doesnt-spam)
+- [For Qoffee, your failed jobs matter.](#for-qoffee-your-failed-jobs-matter)
+- [Qoffee makes sure the notification was delivered.](#qoffee-makes-sure-the-notification-was-delivered)
+- [Notification channels](#notification-channels)
+- [Optional Configuration](#optional-configuration)
+- [Triggers](#triggers)
+- [Setting up a Cloudflare Worker as a High Frequency Scheduler (Optional)](#setting-up-a-cloudflare-worker-as-a-high-frequency-scheduler-optional)
+  - [1. Create a Cloudflare Worker](#1-create-a-cloudflare-worker)
+  - [2. Add Worker Secrets](#2-add-worker-secrets)
+  - [3. Worker Code](#3-worker-code)
+  - [4. Configure the Cron Trigger](#4-configure-the-cron-trigger)
+  - [5. Generate a GitHub Token](#5-generate-a-github-token)
+  - [6. Test the Scheduler](#6-test-the-scheduler)
+  - [7. Verify the Workflow](#7-verify-the-workflow)
+- [Where Qoffee could go](#where-qoffee-could-go)
+- [Other Vendors looked into](#other-vendors-looked-into)
+- [Test Locally](#test-locally)
+- [Debugging](#debugging)
+- [FAQ](#faq)
+- [License](#license)
 
 ## Perk: Qoffee has no database.
 
@@ -9,7 +37,7 @@ The tracking state lives entirely on IBM's servers, the repo itself
 never stores anything about you, not your job IDs, not your history, not
 who's using it. That means the repo can be **completely public**, and
 anyone can fork it and run their own copy just by adding their own
-secrets. No cloning, no re-uploading, no private repo required.
+secrets. No cloning, no re-uploading, no private repo required. Additionally, a public repo means that you get unlimited Actions minutes.
 
 > **Public run logs also handled.** GitHub Actions logs on a public repo are world-readable. Qoffee redacts job IDs and instance CRNs to stable short hashes (`job#3beed3`) before anything reaches the log, including inside exception tracebacks, which is where the IBM SDK would otherwise leak your CRN in a request URL. Redaction is **on by default**, because a safe default is worth more than a configurable one. The full IDs are still in your notification, where only you can see them.
 
@@ -28,19 +56,18 @@ discovery through to cleanup.
 Submit job with tag "qoffee"
             │
             ▼
-   GitHub Actions runs (cron, manual trigger, or push)
+   GitHub Actions runs (schedule or manual trigger)
             │
             ▼
    Qoffee queries IBM for every job tagged "qoffee"
             │
             ▼
-   Notify Discord: one batched message per run,
-   every job's current status, every time
+   Notify Discord: one batched message per run with filters to avoid spamming and redundancy.
             │
             ▼
    Terminal jobs (DONE / ERROR / CANCELLED) get
    renamed "qoffee" → "qoffeed", but only AFTER
-   the notification is confirmed sent
+   the notification is confirmed sent.
 ```
 
 ## Setup
@@ -55,9 +82,17 @@ Submit job with tag "qoffee"
    
 Add `SLACK_WEBHOOK` and/or `NTFY_URL` too if you want more than one channel. See [Notification channels](#notification-channels) below.
 
-3. **Actions tab → enable workflows on your fork.** GitHub disables scheduled workflows on forks by default. Optionally trigger it once manually to confirm everything connects.
+3. **Actions tab → enable workflows on your fork.** GitHub disables
+   Actions entirely on a freshly forked repo until you enable them once. Optionally trigger the workflow once manually now to confirm everything connects.
 
 That's it. 
+
+> **GitHub disables scheduled workflows after 60 days with no repo
+> activity**, silently, and it also disables manual dispatch until
+> re-enabled. To prevent that, Qoffee pushes an empty "keepalive" commit
+> every 45 days if the repo has been otherwise quiet. If you see an
+> unexplained `chore: keepalive` commit in your history, that's why, 
+> it's expected, not a bug.
 
 ## Usage: Tagging a job with `qoffee`
 
@@ -93,7 +128,7 @@ seeing it on the next run. No other cleanup needed.
 
 
 
-## Qoffee notifies in a batch and doesn't spam.
+## Qoffee doesn't spam.
  
 Every run sends **one batched message**, not one per job. As jobs
 resolve, they drop out of the batch, so the message naturally shrinks
@@ -151,7 +186,7 @@ CHANNELS = "discord,slack,ntfy"
  
 By default, the **first** channel listed must confirm delivery before a job's tag is updated, that way a single broken webhook can never cause a job to silently drop out of tracking without you having actually been told. If every configured channel fails on a given run, nothing changes and the same news is reported again next run.
 
-## Optional Configuration
+## Optional Configurations
  
 Everything you'd want to change lives in one file: `qoffee/settings.py`. It's a plain block of commented constants, no YAML, no JSON, no hidden config service.
  
@@ -166,31 +201,12 @@ Everything you'd want to change lives in one file: `qoffee/settings.py`. It's a 
  
 `REDACT_LOGS` defaults **on** deliberately, this repo can be public, which means its Actions run logs are readable by anyone, and the full IDs are already sitting safely in your private notification either way. There's no cost to leaving it on.
 
-
 ## Triggers
 
 The workflow runs on:
-- **`schedule`**: default setting at every 15 minutes, automatically. (Not consistent, and has delays, solution discussed below.)
+- **`schedule`**: every 15 minutes by default, automatically. (Not consistent, and has delays, solution discussed below, see the Cloudflare section.)
 - **`workflow_dispatch`**: manually, including from the GitHub Mobile
-  app, so you can check on demand without opening a laptop. Manual triggering works with no delays.
-
-
-## Test Locally
-
-```bash
-pip install -e ".[dev]"
-pytest -m "not live"
-```
- 
-## Debugging
- 
-```bash
-python -m qoffee --check-config   # validate everything, contact nothing
-python -m qoffee --dry-run        # fetch, decide, report — change nothing
-```
- 
-`dry_run` is also a checkbox on the manual workflow trigger, so you can ask "what does Qoffee think right now?" from the GitHub mobile app without consuming a notification.
- 
+  app, so you can check on demand without opening a laptop. Manual triggering spins up with no delays.
 
 ## Setting up a Cloudflare Worker as a High Frequency Scheduler (Optional)
 
@@ -320,11 +336,26 @@ And that's it. You are done.
  
 - AWS Braket was investigated: Braket cannot filter tasks by tag server-side, *and* AWS already ships first-party push notifications via EventBridge and SNS. Duplicating a native feature didn't seem like it would be worth the maintenance for now. If you want Braket notifications today, [use EventBridge](https://docs.aws.amazon.com/braket/latest/developerguide/braket-monitor-eventbridge.html).
 
+## Testing for Developers
+
+```bash
+pip install -e ".[dev]"
+pytest -m "not live"
+```
+ 
+## Debugging Locally
+ 
+```bash
+python -m qoffee --check-config   # validate everything, contact nothing
+python -m qoffee --dry-run        # fetch, decide, report — change nothing
+```
+
+
 ## FAQ
  
 **Do I need to keep my laptop on?** No. It runs on GitHub's infrastructure.
  
-**Does this cost anything?** No. GitHub Actions is free for public repos; IBM's Open Plan is free; Discord webhooks are free. Optional Cloudfare Worker for Qoffee requirements is free-tier.
+**Does this cost anything?** No. GitHub Actions is free for public repos; IBM's Open Plan is free; Discord webhooks are free. The optional Cloudflare Worker is also free-tier.
  
 **Can you see my quantum jobs?** No. There is no server to send them to. Read the code, it's fully public.
 
@@ -336,7 +367,6 @@ And that's it. You are done.
  
 **What if my notification service is down?** Nothing gets untagged, the run goes red, and everything is reported again next run. By design.
  
----
  
 ## License
  
