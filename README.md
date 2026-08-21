@@ -1,6 +1,12 @@
-<img src="assets/qoffee_banner.svg" alt="Qoffee banner">
+<p align="center">
+  <img src="assets/qoffee-logo.svg" alt="Qoffee logo" width="170">
+</p>
 
----
+<p align="center">
+<em>Qoffee monitors your quantum jobs, so you don't have to.</em>
+</p>
+
+
 <p align="center">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-293D38?style=flat-square">
   <img alt="python" src="https://img.shields.io/badge/python-3.11+-293D38?style=flat-square">
@@ -8,6 +14,8 @@
   <img alt="cost" src="https://img.shields.io/badge/cost-free-293D38?style=flat-square">
   <img alt="provider" src="https://img.shields.io/badge/provider-IBM%20Quantum-0F766E?style=flat-square">
 </p>
+
+# Qoffee
 
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
 notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue. Setup is a one time process, and takes 3 minutes. 
