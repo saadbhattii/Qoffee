@@ -1,8 +1,8 @@
 # ☕ Qoffee
 
 
-Qoffee is an open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
-notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue.
+Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
+notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue. Setup is a one time process, and takes 3 minutes. 
 
 ## Contents
 
@@ -37,7 +37,7 @@ The tracking state lives entirely on IBM's servers, the repo itself
 never stores anything about you, not your job IDs, not your history, not
 who's using it. That means the repo can be **completely public**, and
 anyone can fork it and run their own copy just by adding their own
-secrets. No cloning, no re-uploading, no private repo required. Additionally, a public repo means that you get unlimited Actions minutes.
+secrets. No cloning, no re-uploading, no private repo required. Moreover, all public repositories get unlimited Actions minutes.
 
 > **Public run logs also handled.** GitHub Actions logs on a public repo are world-readable. Qoffee redacts job IDs and instance CRNs to stable short hashes (`job#3beed3`) before anything reaches the log, including inside exception tracebacks, which is where the IBM SDK would otherwise leak your CRN in a request URL. Redaction is **on by default**, because a safe default is worth more than a configurable one. The full IDs are still in your notification, where only you can see them.
 
@@ -78,10 +78,12 @@ Submit job with tag "qoffee"
    |---|---|
    | `IBM_TOKEN` | Your IBM Quantum API token |
    | `IBM_CRN` | Your IBM Quantum instance CRN |
-   | `DISCORD_WEBHOOK` | A webhook URL from your own Discord server (default channel) |
-   
+   | `DISCORD_WEBHOOK` | A webhook URL from your own Discord server (default channel) [A guide to getting it.](https://www.svix.com/resources/guides/how-to-make-webhook-discord/)|
+
 Add `SLACK_WEBHOOK` and/or `NTFY_URL` too if you want more than one channel. See [Notification channels](#notification-channels) below.
 
+> **Note:** [GitHub affirms](https://docs.github.com/en/actions/concepts/security/secrets) that nobody can view a secret's value once it's set; not you, not a collaborator, not anyone browsing a public repo. [This isn't fork-specific: it's true for every GitHub repository, always.](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets) Forking doesn't migrate secrets, [each fork's secrets are created independently by whoever owns that fork, and stay scoped to it alone.](https://2i2c.org/blog/github-action-secrets-forked-repositories/)
+   
 3. **Actions tab → enable workflows on your fork.** GitHub disables
    Actions entirely on a freshly forked repo until you enable them once. Optionally trigger the workflow once manually now to confirm everything connects.
 
@@ -100,7 +102,7 @@ Add one line to whatever script you already use to submit jobs:
 
 ```python
 sampler = Sampler(backend)
-sampler.options.environment.job_tags = ["qoffee"]
+sampler.options.environment.job_tags = ["qoffee"] #tagged
 
 job = sampler.run([isa_circuit])
 ```
@@ -110,13 +112,13 @@ submit in this session, as long as you can retrieve it:
 
 ```python
 job = service.job("your_job_id_here")
-job.update_tags(list(job.tags or []) + ["qoffee"])
+job.update_tags(list(job.tags or []) + ["qoffee"]) #tagged
 ```
 
 Optionally, you can give it a name so notifications are readable instead of showing a raw job ID, add a second tag using the `name:` prefix:
 
 ```python
-sampler.options.environment.job_tags = ["qoffee", "name:Bell Test 1"]
+sampler.options.environment.job_tags = ["qoffee", "name:Bell Test 1"] #tagged and named
 ```
 
 IBM caps each tag at **24 characters** and allows **5 tags per job**
@@ -125,6 +127,16 @@ itself.
 
 To **`stop tracking a job manually`**, just remove or rename the `qoffee` tag yourself and Qoffee will simply stop
 seeing it on the next run. No other cleanup needed.
+
+```python
+# For removing the tag
+job = service.job("your_job_id_here")
+job.update_tags([t for t in (job.tags or []) if t != "qoffee"])
+
+#For renaming the tag
+job = service.job("your_job_id_here")
+job.update_tags(["qoffeed" if t == "qoffee" else t for t in (job.tags or [])])
+```
 
 
 
@@ -375,7 +387,7 @@ MIT.
 
  
 <p align="center">
-<em>Submit. Tag. Close the laptop.</em>
+<em>Submit. Tag. Forget.</em>
 </p>
 
 
