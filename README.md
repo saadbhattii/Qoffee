@@ -20,6 +20,7 @@ notifies you when it's done, or when the job fails, without you ever needing to 
 - [Qoffee doesn't spam.](#qoffee-doesnt-spam)
 - [For Qoffee, your failed jobs matter.](#for-qoffee-your-failed-jobs-matter)
 - [Qoffee makes sure the notification was delivered.](#qoffee-makes-sure-the-notification-was-delivered)
+- [Does Qoffee add another tag?](#does-qoffee-add-another-tag)
 - [When Qoffee gives up](#when-qoffee-gives-up)
 - [Test Locally](#test-locally)
 - [Debugging](#debugging)
@@ -147,8 +148,6 @@ job = service.job("your_job_id_here")
 job.update_tags(["qoffeed" if t == "qoffee" else t for t in (job.tags or [])])
 ```
 
-
-
 ## Qoffee doesn't spam.
  
 Every run sends **one batched message**, not one per job. As jobs
@@ -157,11 +156,10 @@ over time.
 
 Qoffee doesn't spam the same status notification as well. Qoffee tracks the last state it reported, which it encodes in the tag itself, so this costs no storage, and stays silent when nothing has changed.
 
-A job that sits in the queue for six hours produces **one** message. Only when the status changes, you are notified.
+A job that sits in the queue for six hours produces **one** message. Only when the status changes, you are notified. To learn how Qoffee avoids the notification redundancy, see [Does Qoffee add another tag?](#does-qoffee-add-another-tag) below. 
 
 Also, if nothing is currently tagged `qoffee`, Qoffee sends **no message at
 all**.
- 
 
 ## For Qoffee, your failed jobs matter.
 
@@ -191,6 +189,39 @@ any reason, every tag is left exactly as it was, and everything gets
 re-reported on the next run instead of silently disappearing from
 tracking.
 
+## Does Qoffee add another tag? 
+
+Yes. One extra, and it's temporary.
+
+You add one tag. Qoffee adds a second one, rewrites it as the job moves through
+its life, and removes both at the end. This matters to you because IBM allows
+only **five tags per job**, so you should know how many Qoffee is using.
+
+**What the job actually carries over its lifetime:**
+
+| Moment | Tags on the job | Count |
+|---|---|---|
+| You submit it | `qoffee` | 1 |
+| Qoffee sees it queued | `qoffee`, `qoffee@Q` | 2 |
+| It starts running | `qoffee`, `qoffee@R` | 2 |
+| It fails, and you're told | `qoffee`, `qoffee@F:1755835200` | 2 |
+| Tracking ends | `qoffeed` | 1 |
+
+### Why the second tag exists
+
+Qoffee has no database, so "I already told you this job was queued" has to be
+written down somewhere. It gets written on the job itself.
+
+- `qoffee@Q`: queued, and you've been told
+- `qoffee@R`: running, and you've been told
+- `qoffee@F:1755835200`: failed, and you've been told. The number is a Unix
+  timestamp, used only by the `FAILURE_AUTOCLEAR_HOURS` safety net.
+
+On every run Qoffee compares the job's real status against the letter in that
+tag. Same, and it stays silent. Different, and it notifies you, then rewrites
+the tag. That comparison is the entire reason you aren't pinged every fifteen
+minutes for the same status.
+ 
 ## When Qoffee gives up
 
 IBM allows five tags per job. If a job already carries five of your own, Qoffee
@@ -203,6 +234,7 @@ This is distinct from a transient failure. A network blip is retried quietly on
 the next run and the run still passes; only a rejection that can never succeed
 turns the run red.
 
+
 ## Testing for Developers
 
 ```bash
@@ -214,7 +246,7 @@ pytest -m "not live"
 
 ```bash
 python -m qoffee --check-config   # validate everything, contact nothing
-python -m qoffee --dry-run        # fetch, decide, report — change nothing
+python -m qoffee --dry-run        # fetch, decide, report: change nothing
 ```
 
 Exit codes are distinct so a red run tells you what broke without opening the log:
