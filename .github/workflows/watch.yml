@@ -1,6 +1,8 @@
 name: Qoffee Watcher
 
 on:
+  schedule:
+    - cron: '*/15 * * * *'
     # GitHub delays scheduled runs under load; 15 minutes is a floor, not a
     # promise. Fine for queues measured in hours.
   workflow_dispatch:
