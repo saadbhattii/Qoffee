@@ -10,7 +10,7 @@ from qoffee.core import engine
 def clean_env(monkeypatch):
     for key in (
         "IBM_TOKEN", "IBM_CRN", "CHANNELS", "REQUIRED_CHANNELS",
-        "FAILURE_AUTOCLEAR_HOURS", "REDACT_LOGS", "TRACKING_TAG",
+        "FAILURE_AUTOCLEAR_HOURS", "REDACT_LOGS",
         "DISCORD_WEBHOOK", "SLACK_WEBHOOK", "NTFY_URL",
     ):
         monkeypatch.delenv(key, raising=False)

@@ -11,7 +11,7 @@ from qoffee.config import ConfigError, load
 def base_env(monkeypatch):
     for key in (
         "IBM_TOKEN", "IBM_CRN", "CHANNELS", "REQUIRED_CHANNELS",
-        "FAILURE_AUTOCLEAR_HOURS", "REDACT_LOGS", "TRACKING_TAG",
+        "FAILURE_AUTOCLEAR_HOURS", "REDACT_LOGS",
         "DISCORD_WEBHOOK", "SLACK_WEBHOOK", "NTFY_URL",
     ):
         monkeypatch.delenv(key, raising=False)
@@ -88,16 +88,4 @@ def test_redact_flag_parsing(base_env, value, expected):
 def test_bad_bool_rejected(base_env):
     base_env.setenv("REDACT_LOGS", "maybe")
     with pytest.raises(ConfigError, match="boolean"):
-        load()
-
-
-def test_tracking_tag_with_separator_rejected(base_env):
-    base_env.setenv("TRACKING_TAG", "qof@fee")
-    with pytest.raises(ConfigError, match="cannot contain"):
-        load()
-
-
-def test_overlong_tracking_tag_rejected(base_env):
-    base_env.setenv("TRACKING_TAG", "x" * 30)
-    with pytest.raises(ConfigError):
         load()

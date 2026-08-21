@@ -10,7 +10,7 @@ it cannot report the result.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import timedelta
 
 from . import settings
@@ -29,7 +29,6 @@ class Config:
     required_channels: set[str]
     failure_autoclear: timedelta | None
     redact_logs: bool
-    tracking_tag: str = field(default=settings.TRACKING_TAG)
 
 
 def _env(name: str, default):
@@ -101,18 +100,6 @@ def load() -> Config:
 
     redact = _as_bool(_env("REDACT_LOGS", settings.REDACT_LOGS), "REDACT_LOGS")
 
-    tag = _env("TRACKING_TAG", settings.TRACKING_TAG)
-    if not tag or len(tag) > settings.MAX_TAG_LENGTH - 3:
-        raise ConfigError(
-            "TRACKING_TAG must be non-empty and short enough to leave room for "
-            f"its state suffix (max {settings.MAX_TAG_LENGTH - 3} characters)."
-        )
-    if settings.STATE_SEPARATOR in tag:
-        raise ConfigError(
-            f"TRACKING_TAG cannot contain {settings.STATE_SEPARATOR!r}; "
-            "it separates the tag from its encoded state."
-        )
-
     return Config(
         ibm_token=token,
         ibm_instance=instance,
@@ -120,5 +107,4 @@ def load() -> Config:
         required_channels=required,
         failure_autoclear=autoclear,
         redact_logs=redact,
-        tracking_tag=tag,
     )

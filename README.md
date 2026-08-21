@@ -389,10 +389,9 @@ python -m qoffee --dry-run        # fetch, decide, report — change nothing
  
  
 ## License
- 
+
 MIT.
  
-
  
 <p align="center">
 <em>Submit. Tag. Forget.</em>

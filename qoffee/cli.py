@@ -7,6 +7,7 @@ broke without opening the log.
     1  configuration error
     2  provider unreachable
     3  a required notification channel failed; tags left untouched
+    4  a job could not be updated and never will be; see the log
 """
 
 from __future__ import annotations
@@ -71,7 +72,7 @@ def main(argv: list[str] | None = None) -> int:
     log.info(
         "run %s | tag=%s | channels=%s | required=%s | autoclear=%s | redact=%s",
         run_id,
-        config.tracking_tag,
+        settings.TRACKING_TAG,
         ",".join(config.channel_names),
         ",".join(sorted(config.required_channels)),
         config.failure_autoclear or "off",

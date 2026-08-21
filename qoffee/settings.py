@@ -4,17 +4,12 @@
 ==============================================================================
 
 Keeping your changes confined to this block means you can pull upstream fixes
-without merge conflicts. Every value here can also be overridden by an
+without merge conflicts. Most values here can also be overridden by an
 environment variable of the same name (see the parsing in config.py), which is
-what the GitHub Actions workflow uses.
+what the GitHub Actions workflow uses; RESOLVED_TAG is file-only.
 """
 
 # --- Tracking -----------------------------------------------------------
-
-# The tag a job must carry to be tracked. Change this to run two independent
-# Qoffee instances against one IBM account, or to avoid colliding with someone
-# else sharing your instance.
-TRACKING_TAG = "qoffee"
 
 # Tag applied once a job stops being tracked. Set to "" to delete the tracking
 # tags outright instead of leaving an audit trail.
@@ -54,6 +49,13 @@ REDACT_LOGS = True
 # ==============================================================================
 #   NOTHING BELOW THIS LINE IS A USER SETTING.
 # ==============================================================================
+
+# The tag a job must carry to be tracked. NOT a user setting: its length is
+# load-bearing. Qoffee writes "<TAG>@F:<10-digit epoch>" to pin a reported
+# failure, so anything longer than 11 characters cannot be encoded within IBM's
+# 24-character cap, and the failure state would silently fail to persist,
+# re-notifying forever. Use the "name:" label to distinguish your jobs instead.
+TRACKING_TAG = "qoffee"
 
 # IBM caps job tags at 5 per job and 24 characters each. Qoffee uses two of
 # them (tracking + state); a "name:" label uses a third.
