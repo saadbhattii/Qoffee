@@ -253,3 +253,32 @@ def test_unknown_status_is_never_silently_resolved():
     assert run(provider, [channel]) == engine.EXIT_OK
     assert "qoffee" in provider.tags_of("job000000000000000001")
     assert settings.RESOLVED_TAG not in provider.tags_of("job000000000000000001")
+
+
+def test_permanently_unwritable_job_goes_red_instead_of_looping_silently():
+    """A job whose tags can never be written must not be retried forever in
+    silence: that is the notification loop this tool exists to prevent."""
+    provider = FakeProvider(permanent_fail_on_write={"job000000000000000001"})
+    provider.add("job000000000000000001", "DONE", tags=("qoffee",))
+    channel = FakeChannel()
+
+    assert run(provider, [channel]) == engine.EXIT_WRITE
+    assert len(channel.sent) == 1
+    assert "qoffee" in provider.tags_of("job000000000000000001")
+
+
+def test_permanent_failure_does_not_abandon_the_other_jobs():
+    provider = FakeProvider(permanent_fail_on_write={"job000000000000000001"})
+    provider.add("job000000000000000001", "DONE", tags=("qoffee",))
+    provider.add("job000000000000000002", "DONE", tags=("qoffee",))
+
+    assert run(provider, [FakeChannel()]) == engine.EXIT_WRITE
+    assert settings.RESOLVED_TAG in provider.tags_of("job000000000000000002")
+
+
+def test_delivery_failure_outranks_a_permanent_write_failure():
+    """Nothing was applied, which is a cleaner statement than a partial write."""
+    provider = FakeProvider(permanent_fail_on_write={"job000000000000000001"})
+    provider.add("job000000000000000001", "DONE", tags=("qoffee",))
+
+    assert run(provider, [FakeChannel(ok=False)]) == engine.EXIT_DELIVERY

@@ -28,10 +28,23 @@ EXIT_OK = 0
 EXIT_CONFIG = 1
 EXIT_PROVIDER = 2
 EXIT_DELIVERY = 3
+EXIT_WRITE = 4
 
 
 class ProviderError(RuntimeError):
     """Raised by an adapter when the upstream service could not be reached."""
+
+
+class PermanentWriteError(ProviderError):
+    """A tag write that will never succeed, however many times it is retried.
+
+    Distinct from a transient failure because the response differs. A network
+    blip should be retried silently next run; a job whose tags cannot be
+    encoded is stuck until a human intervenes, and since Qoffee has no database
+    it cannot even record that it gave up. Left as a generic exception it would
+    be swallowed and retried forever, which surfaces to the user as endless
+    duplicate notifications and a green run. So it is surfaced instead.
+    """
 
 
 def _log_plan(p: Plan) -> None:
@@ -81,7 +94,9 @@ def _dispatch(
     return satisfied
 
 
-def _apply(store, actions, *, delivered: bool) -> None:
+def _apply(store, actions, *, delivered: bool) -> int:
+    """Apply the plan. Returns the number of permanently unwritable jobs."""
+    permanent = 0
     for action in actions:
         if isinstance(action, Leave):
             continue
@@ -99,10 +114,22 @@ def _apply(store, actions, *, delivered: bool) -> None:
                     action.state.code,
                     action.reason,
                 )
+        except PermanentWriteError as exc:
+            # Retrying will not help. Say so loudly and let the run go red,
+            # because the alternative is a silent notification loop.
+            permanent += 1
+            log.error(
+                "cannot update %s: %s Until its tracking tag is removed by "
+                "hand, this job will be re-reported on every run.",
+                action.job.id,
+                exc,
+            )
         except Exception:
             # One job's tag write failing must not abandon the rest. The job
             # stays in its previous state and is re-evaluated next run.
             log.exception("failed to apply %s to %s", type(action).__name__, action.job.id)
+
+    return permanent
 
 
 def run(
@@ -151,10 +178,20 @@ def run(
     else:
         log.info("no state changes; staying quiet")
 
-    _apply(store, p.actions, delivered=delivered)
+    permanent = _apply(store, p.actions, delivered=delivered)
 
+    # Delivery failure takes precedence: by construction nothing was applied,
+    # which is a cleaner statement about the run than a partial write.
     if p.notify and not delivered:
         log.error("required channel(s) failed; tags left unchanged for retry")
         return EXIT_DELIVERY
+
+    if permanent:
+        log.error(
+            "%d job(s) cannot be updated and will keep being re-reported; "
+            "remove their tracking tag to stop it",
+            permanent,
+        )
+        return EXIT_WRITE
 
     return EXIT_OK
