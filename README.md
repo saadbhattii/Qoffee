@@ -20,8 +20,11 @@ notifies you when it's done, or when the job fails, without you ever needing to 
 - [Qoffee doesn't spam.](#qoffee-doesnt-spam)
 - [For Qoffee, your failed jobs matter.](#for-qoffee-your-failed-jobs-matter)
 - [Qoffee makes sure the notification was delivered.](#qoffee-makes-sure-the-notification-was-delivered)
+- [When Qoffee gives up](#when-qoffee-gives-up)
+- [Test Locally](#test-locally)
+- [Debugging](#debugging)
 - [Notification channels](#notification-channels)
-- [Optional Configuration](#optional-configuration)
+- [Optional Configurations](#optional-configurations)
 - [Triggers](#triggers)
 - [Setting up a Cloudflare Worker as a High Frequency Scheduler (Optional)](#setting-up-a-cloudflare-worker-as-a-high-frequency-scheduler-optional)
   - [1. Create a Cloudflare Worker](#1-create-a-cloudflare-worker)
@@ -33,8 +36,6 @@ notifies you when it's done, or when the job fails, without you ever needing to 
   - [7. Verify the Workflow](#7-verify-the-workflow)
 - [Where Qoffee could go](#where-qoffee-could-go)
 - [Other Vendors looked into](#other-vendors-looked-into)
-- [Test Locally](#test-locally)
-- [Debugging](#debugging)
 - [FAQ](#faq)
 - [License](#license)
 
@@ -190,6 +191,42 @@ any reason, every tag is left exactly as it was, and everything gets
 re-reported on the next run instead of silently disappearing from
 tracking.
 
+## When Qoffee gives up
+
+IBM allows five tags per job. If a job already carries five of your own, Qoffee
+cannot add its own tracking tag, and there is no database in which to record
+that it tried. Rather than retry forever in silence, the run exits with code
+**4**, goes red in the Actions tab, and names the job in the log. Remove one of
+that job's tags, or remove `qoffee` from it, and the next run proceeds normally.
+
+This is distinct from a transient failure. A network blip is retried quietly on
+the next run and the run still passes; only a rejection that can never succeed
+turns the run red.
+
+## Testing for Developers
+
+```bash
+pip install -e ".[dev]"
+pytest -m "not live"
+```
+ 
+## Debugging Locally
+
+```bash
+python -m qoffee --check-config   # validate everything, contact nothing
+python -m qoffee --dry-run        # fetch, decide, report — change nothing
+```
+
+Exit codes are distinct so a red run tells you what broke without opening the log:
+
+| Code | Meaning |
+|---|---|
+| `0` | Success, including "nothing tagged" |
+| `1` | Configuration error, caught before IBM is contacted |
+| `2` | IBM unreachable; no tags touched |
+| `3` | A required notification channel failed; no tags touched |
+| `4` | A job's tags can never be written; see the log for which |
+
 ## Notification channels
  
 Set `CHANNELS` in `qoffee/settings.py`, comma-separated, in priority order:
@@ -212,7 +249,6 @@ Everything you'd want to change lives in one file: `qoffee/settings.py`. It's a 
  
 | Setting | Default | What it controls |
 |---|---|---|
-| `TRACKING_TAG` | `"qoffee"` | The tag a job needs to be tracked |
 | `RESOLVED_TAG` | `"qoffeed"` | Applied once tracking stops (set `""` to delete the tag outright instead) |
 | `CHANNELS` | `"discord"` | Which notification channels are active |
 | `REQUIRED_CHANNELS` | *(first channel)* | Which channels must confirm delivery before tags change |
@@ -220,6 +256,13 @@ Everything you'd want to change lives in one file: `qoffee/settings.py`. It's a 
 | `REDACT_LOGS` | `True` | Replace job IDs and instance CRNs with short hashes in the public Actions log |
  
 `REDACT_LOGS` defaults **on** deliberately, this repo can be public, which means its Actions run logs are readable by anyone, and the full IDs are already sitting safely in your private notification either way. There's no cost to leaving it on.
+
+> The tracking tag itself is deliberately **not** configurable. Qoffee encodes a
+reported failure as `qoffee@F:<epoch>`, which needs 13 characters on top of the
+tag, and IBM caps tags at 24. A longer tag cannot be encoded, so the failure
+state silently fails to persist and the job is re-reported on every run. Use
+`name:` labels to distinguish your jobs instead.
+
 
 ## Triggers
 
@@ -355,21 +398,6 @@ And that's it. You are done.
 ## Other Vendors looked into
  
 - AWS Braket was investigated: Braket cannot filter tasks by tag server-side, *and* AWS already ships first-party push notifications via EventBridge and SNS. Duplicating a native feature didn't seem like it would be worth the maintenance for now. If you want Braket notifications today, [use EventBridge](https://docs.aws.amazon.com/braket/latest/developerguide/braket-monitor-eventbridge.html).
-
-## Testing for Developers
-
-```bash
-pip install -e ".[dev]"
-pytest -m "not live"
-```
- 
-## Debugging Locally
- 
-```bash
-python -m qoffee --check-config   # validate everything, contact nothing
-python -m qoffee --dry-run        # fetch, decide, report — change nothing
-```
-
 
 ## FAQ
  
