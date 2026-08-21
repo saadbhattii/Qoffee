@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "qoffee"
 version = "0.3.0"
+license = "MIT"
 description = "Quantum job tracking and notification for IBM Quantum."
 requires-python = ">=3.11"
 dependencies = [
