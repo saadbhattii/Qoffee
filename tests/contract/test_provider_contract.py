@@ -3,6 +3,8 @@ adapter inherits the whole suite for free."""
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from datetime import datetime, timezone
 
 import pytest
@@ -77,3 +79,23 @@ def test_failure_state_survives_a_roundtrip(provider):
     restored = provider.fetch_tracked()[0].tracking
     assert restored.code == FAILED_CODE
     assert restored.failed_at == T
+
+
+def test_retracking_a_resolved_job_does_not_accumulate_tags(provider):
+    """IBM allows five tags. Leaving `qoffeed` behind on a re-tracked job
+    silently burns a slot the user does not know is scarce."""
+    job = provider.fetch_tracked()[0]
+    provider.resolve(job)
+
+    resolved = provider.jobs[job.id]
+    provider.jobs[job.id] = replace(
+        resolved, tags=resolved.tags + (settings.TRACKING_TAG,)
+    )
+
+    retracked = provider.fetch_tracked()[0]
+    provider.set_state(retracked, TrackingState(code="R"))
+
+    tags = provider.tags_of(job.id)
+    assert settings.RESOLVED_TAG not in tags
+    assert tags.count(settings.TRACKING_TAG) == 1
+    assert len(tags) <= settings.MAX_TAGS_PER_JOB

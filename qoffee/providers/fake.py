@@ -14,7 +14,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 
 from ..core.models import TrackedJob, TrackingState
-from ..providers.ibm import decode_name, decode_state, encode_state
+from ..providers.ibm import (
+    _strip_qoffee_tags,
+    decode_name,
+    decode_state,
+    encode_state,
+)
 from .. import settings
 
 
@@ -27,6 +32,7 @@ class FakeProvider:
     script: list[dict[str, str]] = field(default_factory=list)
     fail_on_fetch: bool = False
     fail_on_write: set[str] = field(default_factory=set)
+    permanent_fail_on_write: set[str] = field(default_factory=set)
     writes: list[tuple[str, str, tuple[str, ...]]] = field(default_factory=list)
     _frame: int = 0
 
@@ -88,12 +94,9 @@ class FakeProvider:
 
     def set_state(self, job: TrackedJob, state: TrackingState) -> None:
         self._guard(job.id)
-        prefix = f"{settings.TRACKING_TAG}{settings.STATE_SEPARATOR}"
-        tags = [
-            t
-            for t in job.tags
-            if t != settings.TRACKING_TAG and not t.startswith(prefix)
-        ]
+        # Shared with the real adapter on purpose: a test double that
+        # reimplements the logic it is standing in for stops being a contract.
+        tags = _strip_qoffee_tags(job.tags)
         tags.append(settings.TRACKING_TAG)
         encoded = encode_state(state)
         if encoded:
@@ -102,20 +105,18 @@ class FakeProvider:
 
     def resolve(self, job: TrackedJob) -> None:
         self._guard(job.id)
-        prefix = f"{settings.TRACKING_TAG}{settings.STATE_SEPARATOR}"
-        tags = [
-            t
-            for t in job.tags
-            if t != settings.TRACKING_TAG and not t.startswith(prefix)
-        ]
-        if settings.RESOLVED_TAG and settings.RESOLVED_TAG not in tags:
+        tags = _strip_qoffee_tags(job.tags)
+        if settings.RESOLVED_TAG:
             tags.append(settings.RESOLVED_TAG)
         self._commit(job.id, "resolve", tuple(tags))
 
     def _guard(self, job_id: str) -> None:
-        if job_id in self.fail_on_write:
-            from ..core.engine import ProviderError
+        from ..core.engine import PermanentWriteError, ProviderError
 
+        # Permanent first: it subclasses ProviderError, so order matters.
+        if job_id in self.permanent_fail_on_write:
+            raise PermanentWriteError(f"fake permanent rejection for {job_id}.")
+        if job_id in self.fail_on_write:
             raise ProviderError(f"fake write failure for {job_id}")
 
     def _commit(self, job_id: str, op: str, tags: tuple[str, ...]) -> None:

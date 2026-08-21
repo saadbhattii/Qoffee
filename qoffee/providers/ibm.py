@@ -27,7 +27,7 @@ import logging
 from datetime import datetime, timezone
 
 from .. import settings
-from ..core.engine import ProviderError
+from ..core.engine import PermanentWriteError, ProviderError
 from ..core.models import FAILED_CODE, JobStatus, TrackedJob, TrackingState
 
 log = logging.getLogger(__name__)
@@ -102,10 +102,15 @@ def decode_name(tags: tuple[str, ...]) -> str | None:
 
 
 def _strip_qoffee_tags(tags: tuple[str, ...]) -> list[str]:
+    """Remove every tag Qoffee owns, preserving the user's own.
+
+    RESOLVED_TAG is stripped too. Without that, re-tracking a finished job
+    leaves ``qoffeed`` behind forever, and since IBM allows only five tags per
+    job that silently burns a slot the user does not know is scarce.
+    """
     prefix = _state_prefix()
-    return [
-        t for t in tags if t != settings.TRACKING_TAG and not t.startswith(prefix)
-    ]
+    owned = {settings.TRACKING_TAG, settings.RESOLVED_TAG}
+    return [t for t in tags if t not in owned and not t.startswith(prefix)]
 
 
 class IBMProvider:
@@ -209,18 +214,18 @@ class IBMProvider:
 
     def resolve(self, job: TrackedJob) -> None:
         tags = _strip_qoffee_tags(job.tags)
-        if settings.RESOLVED_TAG and settings.RESOLVED_TAG not in tags:
+        if settings.RESOLVED_TAG:
             tags.append(settings.RESOLVED_TAG)
         self._write_tags(job, tags)
 
     def _write_tags(self, job: TrackedJob, tags: list[str]) -> None:
         for tag in tags:
             if len(tag) > settings.MAX_TAG_LENGTH:
-                raise ProviderError(
-                    f"tag {tag!r} exceeds IBM's {settings.MAX_TAG_LENGTH}-character limit"
+                raise PermanentWriteError(
+                    f"tag {tag!r} exceeds IBM's {settings.MAX_TAG_LENGTH}-character limit."
                 )
         if len(tags) > settings.MAX_TAGS_PER_JOB:
-            raise ProviderError(
+            raise PermanentWriteError(
                 f"job {job.id} would carry {len(tags)} tags; IBM allows "
                 f"{settings.MAX_TAGS_PER_JOB}. Remove a tag from the job to keep tracking it."
             )
