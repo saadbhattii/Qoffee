@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Qoffee">
+  <title>Qoffee</title>
+  <g transform="translate(-2.5,1.5)" fill="#D98324">
+
+    <!-- cup -->
+    <path d="M 11,28 L 45,28 L 41,49 Q 40.2,53 36,53 L 20,53 Q 15.8,53 15,49 Z"/>
+
+    <!-- handle -->
+    <path fill-rule="evenodd" d="
+      M 41.5,36 A 8.5,8.5 0 1,0 58.5,36 A 8.5,8.5 0 1,0 41.5,36 Z
+      M 45,36   A 5,5     0 1,0 55,36   A 5,5     0 1,0 45,36   Z"/>
+
+    <!-- orbit -->
+    <path fill-rule="evenodd" d="
+      M 13.90,21.13 A 15,6     -20 0,1 42.10,10.87 A 15,6     -20 0,1 13.90,21.13 Z
+      M 17.19,19.93 A 11.5,3   -20 0,1 38.81,12.07 A 11.5,3   -20 0,1 17.19,19.93 Z"/>
+
+    <!-- electron -->
+    <circle cx="42.1" cy="10.87" r="3.2"/>
+
+  </g>
+</svg>
