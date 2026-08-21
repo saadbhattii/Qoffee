@@ -9,9 +9,7 @@
 <p align="center">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-yellow?style=flat-square">
   <img alt="python" src="https://img.shields.io/badge/python-3.11+-0369A1?style=flat-square">
-  <img alt="tests" src="https://img.shields.io/badge/tests-passing-6D28D9?style=flat-square">
-  <img alt="cost" src="https://img.shields.io/badge/cost-free-B45309?style=flat-square">
-  <img alt="provider" src="https://img.shields.io/badge/provider-IBM%20Quantum-BE123C?style=flat-square">
+  <img alt="provider" src="https://img.shields.io/badge/provider-IBM%20Quantum-6D28D9?style=flat-square">
 </p>
 
 # Qoffee
