@@ -81,6 +81,7 @@ Submit job with tag "qoffee"
  
 1. **Fork this repo.**
 2. In your fork's **Settings → Secrets and variables → Actions**, add:
+
    | Secret | What it is |
    |---|---|
    | `IBM_TOKEN` | Your IBM Quantum API token |
