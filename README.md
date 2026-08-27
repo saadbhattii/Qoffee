@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="assets/qoffee-logo.svg" alt="Qoffee logo" width="170">
+  <img src="assets/qoffee_banner.svg" alt="Qoffee logo">
 </p>
 
 <p align="center">
-<em>Qoffee monitors your quantum jobs, so you don't have to.</em>
+  <img src="https://qisk.it/e-8f32b728" alt="Qiskit Ecosystem">
 </p>
 
 # Qoffee
