@@ -2,10 +2,6 @@
   <img src="assets/qoffee_banner.svg" alt="Qoffee logo">
 </p>
 
-<p align="center">
-  <img src="https://qisk.it/e-8f32b728" alt="Qiskit Ecosystem">
-</p>
-
 # Qoffee
 
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
