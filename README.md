@@ -1,5 +1,15 @@
 <p align="center">
-  <img src="assets/qoffee_banner.svg" alt="Qoffee logo">
+  <img src="assets/qoffee-logo.svg" alt="Qoffee logo" width="170">
+</p>
+
+<p align="center">
+  <em>Qoffee monitors your quantum jobs, so you don't have to.</em>
+</p>
+
+<p align="center">
+  <img alt="tests" src="https://img.shields.io/badge/tests-passing-00C853?style=for-the-badge">
+  <img alt="cost" src="https://img.shields.io/badge/cost-None-FF1744?style=for-the-badge">
+  <img alt="qiskit ecosystem" src="https://img.shields.io/badge/Qiskit%20Ecosystem-Qoffee-6929C4?style=for-the-badge">
 </p>
 
 # Qoffee
