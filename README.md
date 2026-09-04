@@ -15,15 +15,15 @@ notifies you when it's done, or when the job fails, without you ever needing to 
 
 - [Perk: Qoffee has no database.](#perk-qoffee-has-no-database)
 - [How Qoffee works](#how-qoffee-works)
-- [Setup](#setup)
+- [How to Setup Qoffee](#how-to-setup-qoffee)
 - [Usage: Tagging a job with `qoffee`](#usage-tagging-a-job-with-qoffee)
 - [Qoffee doesn't spam.](#qoffee-doesnt-spam)
 - [For Qoffee, your failed jobs matter.](#for-qoffee-your-failed-jobs-matter)
 - [Qoffee makes sure the notification was delivered.](#qoffee-makes-sure-the-notification-was-delivered)
 - [Does Qoffee add another tag?](#does-qoffee-add-another-tag)
 - [When Qoffee gives up](#when-qoffee-gives-up)
-- [Test Locally](#test-locally)
-- [Debugging](#debugging)
+- [Testing for Developers](#testing-for-developers)
+- [Debugging Locally](#debugging-locally)
 - [Notification channels](#notification-channels)
 - [Optional Configurations](#optional-configurations)
 - [Triggers](#triggers)
@@ -79,7 +79,7 @@ Submit job with tag "qoffee"
    the notification is confirmed sent.
 ```
 
-## Setup
+## How to Setup Qoffee
  
 1. **Fork this repo.**
 2. In your fork's **Settings → Secrets and variables → Actions**, add:
