@@ -450,7 +450,7 @@ And that's it. You are done.
  
 ## License
 
-MIT.
+Apache License 2.0.
  
  
 <p align="center">
