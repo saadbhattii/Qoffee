@@ -1,0 +1,2 @@
+# Keep issue intake focused while allowing maintainers to add templates later.
+blank_issues_enabled: false
