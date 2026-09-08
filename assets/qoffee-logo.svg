@@ -11,8 +11,8 @@
       y2="10">
 
       <stop offset="10%" stop-color="#00D2A0"/>
-      <stop offset="60%" stop-color="#0F62FE"/>
-      <stop offset="100%" stop-color="#6929C4"/>
+      <stop offset="55%" stop-color="#9e0ffe"/>
+      <stop offset="100%" stop-color="#b202e8"/>
 
     </linearGradient>
   </defs>
