@@ -6,6 +6,17 @@
   <em>Qoffee monitors your quantum jobs, so you don't have to.</em>
 </p>
 
+<p align="center">
+  <a href="https://github.com/saadbhattii/Qoffee/actions/workflows/tests.yml"><img src="https://github.com/saadbhattii/Qoffee/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+  <a href="https://github.com/saadbhattii/Qoffee/blob/main/LICENSE"><img src="https://img.shields.io/github/license/saadbhattii/Qoffee" alt="License"></a>
+  <a href="https://deepwiki.com/saadbhattii/Qoffee"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+</p>
+
+<p align="center">
+  <img src="https://qisk.it/e-8f32b728" alt="Qiskit Ecosystem">
+  <a href="https://github.com"><img src="https://img.shields.io/badge/bot-github_actions-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions Bot"></a>
+</p>
+
 # Qoffee
 
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
