@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/qoffee-logo.svg" alt="Qoffee logo" width="170">
+  <img src="assets/qoffee_neon_trail_3s.webp" width="170" alt="Qoffee logo">
 </p>
 
 <p align="center">
