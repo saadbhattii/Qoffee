@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Qoffee">
-  <title>Qoffee</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Qoffee Die-Cut Sticker">
+  <title>Qoffee Die-Cut Sticker</title>
 
   <defs>
+    <!-- Original Gradient -->
     <linearGradient
       id="qoffeeGradient"
       gradientUnits="userSpaceOnUse"
@@ -9,16 +10,36 @@
       y1="55"
       x2="55"
       y2="10">
-
       <stop offset="10%" stop-color="#00D2A0"/>
       <stop offset="55%" stop-color="#9e0ffe"/>
       <stop offset="100%" stop-color="#b202e8"/>
-
     </linearGradient>
+
+    <!-- Filter for subtle depth on the die-cut sticker edge -->
+    <filter id="stickerShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
   </defs>
 
   <g transform="translate(-1,1.5)">
 
+    <!-- Black Background Cutout (Follows exact outer contour & maintains inner center cutouts) -->
+    <g fill="#000000" filter="url(#stickerShadow)">
+      <!-- Outer boundary expanded silhouette -->
+      <path
+        stroke="#000000"
+        stroke-width="5"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        d="
+          M 11,28 L 45,28 L 41,49 Q 40.2,53 36,53 L 20,53 Q 15.8,53 15,49 Z
+          M 38.5,36 A 8.5,8.5 0 1,0 55.5,36 A 8.5,8.5 0 1,0 38.5,36 Z
+          M 13.90,21.13 A 15,6 -20 0,1 42.10,10.87 A 15,6 -20 0,1 13.90,21.13 Z
+        " />
+      <circle cx="42.1" cy="10.87" r="5.7" />
+    </g>
+
+    <!-- Colored Logo Filled Inside the Contour -->
     <!-- cup -->
     <path
       fill="url(#qoffeeGradient)"
