@@ -438,7 +438,7 @@ And that's it. You are done.
 
 ## Other Vendors looked into
  
-- AWS Braket was investigated: Braket cannot filter tasks by tag server-side, *and* AWS already ships first-party push notifications via EventBridge and SNS. Duplicating a native feature didn't seem like it would be worth the maintenance for now. If you want Braket notifications today, [use EventBridge](https://docs.aws.amazon.com/braket/latest/developerguide/braket-monitor-eventbridge.html).
+- AWS Braket was investigated: AWS already ships first-party push notifications via EventBridge and SNS. Duplicating a native feature didn't seem like it would be worth the maintenance for now. If you want Braket notifications today, [use EventBridge](https://docs.aws.amazon.com/braket/latest/developerguide/braket-monitor-eventbridge.html).
 
 ## FAQ
  
@@ -465,21 +465,3 @@ Apache License 2.0.
 <p align="center">
 <em>Submit. Tag. Forget.</em>
 </p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
