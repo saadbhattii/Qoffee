@@ -22,9 +22,9 @@
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
 notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue.
 
-Qoffee is intentionally different from a SaaS model. The idea is to keep researchers in control of their own data and infrastructure: Qoffee runs through their own GitHub environment, keeps job information private to their own storage, requires no paid service, and works with the workflow researchers already use. Minimal setup, maximum ownership, and letting users decide where their data lives.
+Unlike a traditional SaaS, Qoffee is designed to give you complete control over your data and infrastructure. It keeps job information private to your own storage, requires no paid service, and fits naturally into existing workflows. The result is minimal setup, maximum ownership, and the freedom to decide where data lives.
 
-## Setup
+## How to Setup Qoffee
 
 1. **Fork this repo.**
 2. In your fork's **Settings → Secrets and variables → Actions**, add:
@@ -35,14 +35,17 @@ Qoffee is intentionally different from a SaaS model. The idea is to keep researc
    | `IBM_CRN` | Your IBM Quantum instance CRN |
    | `DISCORD_WEBHOOK` | A webhook URL from your own Discord server (default channel) [A guide to getting it.](https://www.svix.com/resources/guides/how-to-make-webhook-discord/)|
 
-3. **Actions tab → enable workflows on your fork.** GitHub disables
-   Actions entirely on a freshly forked repo until you enable them once. Optionally trigger the workflow once manually now to confirm everything connects.
+Add `SLACK_WEBHOOK` and/or `NTFY_URL` too if you want more than one channel. Check [Configuration](docs/configuration.md).
 
-That's it.
+> **Note:** Nobody can view a secret's value once it's set; not you, not a collaborator, not anyone browsing a public repo. This isn't fork-specific: it's true for every GitHub repository. Forking doesn't migrate secrets, each fork's secrets are created independently by whoever owns that fork, and stay scoped to it alone.
+
+3. Open the `Actions` tab on your fork and press the button confirming you want workflows to run. After that, manually enable and trigger the `Qoffee Watcher` workflow once to confirm everything connects.
+
+**That's it.**
 
 ## Usage: Tagging a job with `qoffee`
 
-Add one line to whatever script you already use to submit jobs:
+Add a line to whatever script you already use when submitting jobs:
 
 ```python
 sampler = Sampler(backend)
@@ -69,7 +72,7 @@ IBM caps each tag at **24 characters** and allows **5 tags per job**
 the `name:` prefix uses 5 of those characters, leaving 19 for the label
 itself.
 
-To **`stop tracking a job manually`**, just remove or rename the `qoffee` tag yourself and Qoffee will simply stop
+To **stop tracking a job manually**, just remove or rename the `qoffee` tag yourself and Qoffee will simply stop
 seeing it on the next run. No other cleanup needed.
 
 ```python
@@ -84,7 +87,7 @@ job.update_tags(["qoffeed" if t == "qoffee" else t for t in (job.tags or [])])
 
 ## Documentation
 
-| File | What's in it |
+| Document | What's in it |
 |---|---|
 | [How Qoffee works](docs/how-it-works.md) | The run cycle, the tracking tags, the state machine |
 | [Design decisions](docs/design-decisions.md) | Why there's no database, why failures linger, why tags are the state |
@@ -94,23 +97,23 @@ job.update_tags(["qoffeed" if t == "qoffee" else t for t in (job.tags or [])])
 
 ## Roadmap
 
-- **More channels**: Telegram, email, Teams, generic webhooks. One file each; the core doesn't change.
+- **More channels**: Telegram, email, Teams, generic webhooks.
 - **More providers**: AWS Braket and Azure Quantum.
 
 ## FAQ
 
 - **Do I need to keep my laptop on?** No. It runs on GitHub's infrastructure.
- 
+
 - **Does this cost anything?** No. GitHub Actions is free for public repos; Discord webhooks are free. The optional Cloudflare Worker is also free-tier.
- 
+
 - **Can you see my quantum jobs?** No. There is no server to send them to. Read the code, it's fully public.
 
 - **Can you see my secret keys?** No. They are saved in your forked repository settings that belongs to your Github Account.
- 
+
 - **What if I already have jobs tagged from an older version?** They migrate automatically.
- 
+
 - **How do I stop tracking a job?** Remove the `qoffee` tag. Qoffee stops seeing it on the next run.
- 
+
 - **What if my notification service is down?** Nothing gets untagged, the run goes red, and everything is reported again next run. By design.
 
 ## License
