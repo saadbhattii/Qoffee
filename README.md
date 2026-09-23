@@ -22,7 +22,7 @@
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
 notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue.
 
-Unlike a traditional SaaS, Qoffee is designed to give you complete control over your data and infrastructure. It keeps job information private to your own storage, requires no paid service, and fits naturally into existing workflows. The result is minimal setup, maximum ownership, and the freedom to decide where data lives.
+Unlike a traditional SaaS, Qoffee is designed to give you complete control over your data and infrastructure. It keeps information private to your own storage, requires no paid service, and fits naturally into existing workflows. The result is minimal setup, maximum ownership, and the freedom to decide where data lives.
 
 ## How to Setup Qoffee
 
