@@ -9,7 +9,6 @@
 <p align="center">
   <a href="https://github.com/saadbhattii/Qoffee/actions/workflows/tests.yml"><img src="https://github.com/saadbhattii/Qoffee/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
   <a href="https://github.com/saadbhattii/Qoffee/blob/main/LICENSE"><img src="https://img.shields.io/github/license/saadbhattii/Qoffee" alt="License"></a>
-  <a href="https://deepwiki.com/saadbhattii/Qoffee"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </p>
 
 <p align="center">
