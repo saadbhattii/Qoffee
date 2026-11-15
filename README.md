@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets\qoffee_transparent_hd.webp" alt="Qoffee logo" width="110">
+  <img src="assets\qoffee_transparent_hd.webp" alt="Qoffee logo" width="130">
 </p>
 
 <p align="center">
