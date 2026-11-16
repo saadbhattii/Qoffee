@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets\qoffee_transparent_smooth.webp" alt="Qoffee logo" width="150">
+  <img src="assets\qoffee-mug (3).webp" alt="Qoffee logo" width="165">
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
 Qoffee is a free and open-source IBM quantum job monitoring and notification tool that runs as a GitHub Action in your own repository, on a schedule, under your own GitHub account. You submit a job, tag it, and forget about it. Qoffee
 notifies you when it's done, or when the job fails, without you ever needing to open a laptop, refresh a dashboard, or check a queue.
 
-Unlike a traditional SaaS, Qoffee is designed to give you complete control over your data and infrastructure. It keeps information private to your own storage, requires no paid service, and fits naturally into existing workflows. The result is minimal setup, maximum ownership, and the freedom to decide where data lives.
+Qoffee is designed to give you complete control over your data and infrastructure. It keeps information private to your own storage, requires no paid service, and fits naturally into existing workflows. The result is minimal setup, maximum ownership, and the freedom to decide where data lives.
 
 ## How to Setup Qoffee
 
@@ -34,9 +34,7 @@ Unlike a traditional SaaS, Qoffee is designed to give you complete control over 
    | `IBM_CRN` | Your IBM Quantum instance CRN |
    | `DISCORD_WEBHOOK` | A webhook URL from your own Discord server (default channel) [A guide to getting it.](https://www.svix.com/resources/guides/how-to-make-webhook-discord/)|
 
-Add `SLACK_WEBHOOK` and/or `NTFY_URL` too if you want more than one channel. Check [Configuration](docs/configuration.md).
-
-> **Note:** Nobody can view a secret's value once it's set; not you, not a collaborator, not anyone browsing a public repo. This isn't fork-specific: it's true for every GitHub repository. Forking doesn't migrate secrets, each fork's secrets are created independently by whoever owns that fork, and stay scoped to it alone.
+> **Note:** Nobody can view a secret's value once it's set; not you, not a collaborator, not anyone browsing a public repo. Forking doesn't migrate secrets either. [Learn about secrets in GitHub Actions workflows.](https://docs.github.com/en/actions/concepts/security/secrets)
 
 3. Open the `Actions` tab on your fork and press the button confirming you want workflows to run. After that, manually enable and trigger the `Qoffee Watcher` workflow once to confirm everything connects.
 
