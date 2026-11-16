@@ -118,7 +118,3 @@ job.update_tags(["qoffeed" if t == "qoffee" else t for t in (job.tags or [])])
 ## License
 
 Apache License 2.0.
-
-<p align="center">
-<em>Submit. Tag. Forget.</em>
-</p>
