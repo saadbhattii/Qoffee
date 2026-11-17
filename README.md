@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets\qoffee-mug (3).webp" alt="Qoffee logo" width="165">
+  <img src="assets\qoffee-mug-logo-animation.webp" alt="Qoffee logo" width="165">
 </p>
 
 <p align="center">
@@ -8,10 +8,6 @@
 
 <p align="center">
   <a href="https://github.com/saadbhattii/Qoffee/actions/workflows/tests.yml"><img src="https://github.com/saadbhattii/Qoffee/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-  <a href="https://github.com/saadbhattii/Qoffee/blob/main/LICENSE"><img src="https://img.shields.io/github/license/saadbhattii/Qoffee" alt="License"></a>
-</p>
-
-<p align="center">
   <img src="https://qisk.it/e-8f32b728" alt="Qiskit Ecosystem">
   <a href="https://github.com"><img src="https://img.shields.io/badge/bot-github_actions-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions Bot"></a>
 </p>
