@@ -288,7 +288,7 @@ This quota limits submission, not queries. It also caps the tracked set: a works
 
 Azure supports two paths: `AzureEntraAuth` (OAuth2, scope `https://quantum.microsoft.com/.default`) or an `x-ms-quantum-api-key` header.
 
-The API key suits Qoffee much better because it is one secret, like the IBM token. Entra means registering an app, granting it workspace access and storing three secrets. How API keys are issued is not confirmed yet; see the test plan.
+The API key suits Qoffee much better because it is one secret, like the IBM token. Entra means registering an app, granting it workspace access and storing three secrets. How API keys are issued is not confirmed yet.
 
 ## 5. Side-by-side comparison
 
@@ -388,7 +388,7 @@ Things to watch for:
 
 - Braket `CANCELLING` and Azure `Cancelling` and `CancellationRequested` are not terminal. Mapping them to `CANCELLED` would resolve a job that is still winding down, so map them to an active state.
 - Azure `Finishing` is not terminal either, despite the name.
-- Azure has both `Completed` and `Succeeded`, described as "the job completed" and "the job completed with success". Which one Azure actually sends on success is unverified; see the test plan.
+- Azure has both `Completed` and `Succeeded`, described as "the job completed" and "the job completed with success". Which one Azure actually sends on success is unverified.
 - Azure's status enum has ten values, and the CLI examples show only a few. All ten must be mapped, or the missing ones fall into `UNKNOWN` and stay unreported forever.
 - The policy layer must never resolve an `UNKNOWN` job. `core/policy.py` already follows this rule, and it has to stay that way.
 
